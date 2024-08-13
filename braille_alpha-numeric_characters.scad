@@ -42,7 +42,7 @@
 // dot height   (0.3 - 0.7 mm)
 
 // values that fit in all of the above criteria
-dot_height = .6;
+dot_height = .5;
 dot_radius = .75;
 dot_dist_same_cell = 2.5;
 dot_dist_next_cell = 6;
@@ -50,59 +50,59 @@ dot_dist_next_row = 10;
 
 
 // list or lists of alpha and numeric characters, along with space and #
-braille_characters = [  [32,[[0,0],[0,0],[0,0]] ]/* space - 32 */, 
-[33,[[0,0],[1,1],[1,0]] ]/*exclamation mark - 33 */,
-[34,[[0,0],[1,0],[1,1]] ]/*double quote - 34 */,
-[35,[[0,1],[0,1],[1,1]] ]/* # - 35 */ , 
-[39,[[0,0],[0,0],[1,0]] ]/* apostrophe - 39 */, 
-[44,[[0,0],[1,0],[0,0]] ]/* comma - 44 */,
-[46,[[0,0],[1,1],[0,1]] ]/* period - 46 */, 
-[48,[[0,1],[1,1],[0,0]] ]/* 0 - 48 */,  
-[49,[[1,0],[0,0],[0,0]] ]/* 1 - 49 */, 
-[50,[[1,0],[1,0],[0,0]] ]/* 2 - 50 */, 
-[51,[[1,1],[0,0],[0,0]] ]/* 3 -  51 */, 
-[52,[[1,1],[0,1],[0,0]] ]/* 4 - 52 */,  
-[53,[[1,0],[0,1],[0,0]] ]/* 5 - 53 */,  
-[54,[[1,1],[1,0],[0,0]] ]/* 6 - 54 */,  
-[55,[[1,1],[1,1],[0,0]] ]/* 7 - 55 */, 
-[56,[[1,0],[1,1],[0,0]] ]/* 8 - 56 */,  
-[57,[[0,1],[1,0],[0,0]] ]/* 9 - 57 */,  
-[63,[[0,0],[1,0],[1,1]] ]/*questionmark - 63*/,
-[65,[[1,0],[0,0],[0,0]] ]/* A - 65 */,  
-[66,[[1,0],[1,0],[0,0]] ]/* B - 66 */, 
-[67,[[1,1],[0,0],[0,0]] ]/*C - 67 */, 
-[68,[[1,1],[0,1],[0,0]] ]/*D - 68 */,  
-[69,[[1,0],[0,1],[0,0]] ]/* E - 69 */,  
-[70,[[1,1],[1,0],[0,0]] ]/* F - 70 */,  
-[71,[[1,1],[1,1],[0,0]] ]/* G - 71 */,  
-[72,[[1,0],[1,1],[0,0]] ]/* H - 72 */,  
-[73,[[0,1],[1,0],[0,0]] ]/* I - 73 */,  
-[74,[[0,1],[1,1],[0,0]] ]/* J - 74 */,  
-[75,[[1,0],[0,0],[1,0]] ]/* K - 75 */, 
-[76,[[1,0],[1,0],[1,0]] ]/* L - 76 */, 
-[77,[[1,1],[0,0],[1,0]] ]/* M - 77 */, 
-[78,[[1,1],[0,1],[1,0]] ]/* N - 78 */, 
-[79,[[1,0],[0,1],[1,0]] ]/* O - 79 */, 
-[80,[[1,1],[1,0],[1,0]] ]/* P - 80 */, 
-[81,[[1,1],[1,1],[1,0]] ]/* Q - 81 */,  
-[82,[[1,0],[1,1],[1,0]] ]/* R - 82 */, 
-[83,[[0,1],[1,0],[1,0]] ]/* S - 83 */, 
-[84,[[0,1],[1,1],[1,0]] ]/* T - 84 */, 
-[85,[[1,0],[0,0],[1,1]] ]/* U - 85 */, 
-[86,[[1,0],[1,0],[1,1]] ]/* V - 86 */, 
-[87,[[0,1],[1,1],[0,1]] ]/* W - 87 */, 
-[88,[[1,1],[0,0],[1,1]] ]/* X - 88 */, 
-[89,[[1,1],[0,1],[1,1]] ]/* Y - 89 */, 
-[90,[[1,0],[0,1],[1,1]] ]/* Z - 90 */, 
-[2880,[[0,0],[0,0],[0,1]] ]/*capital letter*/ ];
+braille_characters = [  [32, 0,[[0,0],[0,0],[0,0]] ]/* space - 32 */, 
+[33, 0,[[0,0],[1,1],[1,0]] ]/*exclamation mark - 33 */,
+[34, 0,[[0,0],[1,0],[1,1]] ]/*double quote - 34 */,
+[35, 0,[[0,1],[0,1],[1,1]] ]/* # - 35 */ , 
+[39, 0,[[0,0],[0,0],[1,0]] ]/* apostrophe - 39 */, 
+[44, 0,[[0,0],[1,0],[0,0]] ]/* comma - 44 */,
+[46, 0,[[0,0],[1,1],[0,1]] ]/* period - 46 */, 
+[48, 0,[[0,1],[1,1],[0,0]] ]/* 0 - 48 */,  
+[49, 0,[[1,0],[0,0],[0,0]] ]/* 1 - 49 */, 
+[50, 0,[[1,0],[1,0],[0,0]] ]/* 2 - 50 */, 
+[51, 0,[[1,1],[0,0],[0,0]] ]/* 3 -  51 */, 
+[52, 0,[[1,1],[0,1],[0,0]] ]/* 4 - 52 */,  
+[53, 0,[[1,0],[0,1],[0,0]] ]/* 5 - 53 */,  
+[54, 0,[[1,1],[1,0],[0,0]] ]/* 6 - 54 */,  
+[55, 0,[[1,1],[1,1],[0,0]] ]/* 7 - 55 */, 
+[56, 0,[[1,0],[1,1],[0,0]] ]/* 8 - 56 */,  
+[57, 0,[[0,1],[1,0],[0,0]] ]/* 9 - 57 */,  
+[63, 0,[[0,0],[1,0],[1,1]] ]/*questionmark - 63*/,
+[65,97,[[1,0],[0,0],[0,0]] ]/* A - 65 */,  
+[66,98,[[1,0],[1,0],[0,0]] ]/* B - 66 */, 
+[67,99,[[1,1],[0,0],[0,0]] ]/*C - 67 */, 
+[68,100,[[1,1],[0,1],[0,0]] ]/*D - 68 */,  
+[69,101,[[1,0],[0,1],[0,0]] ]/* E - 69 */,  
+[70,102,[[1,1],[1,0],[0,0]] ]/* F - 70 */,  
+[71,103,[[1,1],[1,1],[0,0]] ]/* G - 71 */,  
+[72,104,[[1,0],[1,1],[0,0]] ]/* H - 72 */,  
+[73,105,[[0,1],[1,0],[0,0]] ]/* I - 73 */,  
+[74,106,[[0,1],[1,1],[0,0]] ]/* J - 74 */,  
+[75,107,[[1,0],[0,0],[1,0]] ]/* K - 75 */, 
+[76,108,[[1,0],[1,0],[1,0]] ]/* L - 76 */, 
+[77,109,[[1,1],[0,0],[1,0]] ]/* M - 77 */, 
+[78,110,[[1,1],[0,1],[1,0]] ]/* N - 78 */, 
+[79,111,[[1,0],[0,1],[1,0]] ]/* O - 79 */, 
+[80,112,[[1,1],[1,0],[1,0]] ]/* P - 80 */, 
+[81,113,[[1,1],[1,1],[1,0]] ]/* Q - 81 */,  
+[82,114,[[1,0],[1,1],[1,0]] ]/* R - 82 */, 
+[83,115,[[0,1],[1,0],[1,0]] ]/* S - 83 */, 
+[84,116,[[0,1],[1,1],[1,0]] ]/* T - 84 */, 
+[85,117,[[1,0],[0,0],[1,1]] ]/* U - 85 */, 
+[86,118,[[1,0],[1,0],[1,1]] ]/* V - 86 */, 
+[87,119,[[0,1],[1,1],[0,1]] ]/* W - 87 */, 
+[88,120,[[1,1],[0,0],[1,1]] ]/* X - 88 */, 
+[89,121,[[1,1],[0,1],[1,1]] ]/* Y - 89 */, 
+[90,122,[[1,0],[0,1],[1,1]] ]/* Z - 90 */, 
+[2880,0,[[0,0],[0,0],[0,1]] ]/*capital letter*/ ];
 
 
  // variable to allow us to access a previous inex in a list
 b =0;
    
        
-raw_string = "H3ll0 W0rld!";   
-//echo("raw_string " ,raw_string);
+raw_string = "k1LL&";   
+
 
 raw_string2= "Thoink You";
 
@@ -137,64 +137,75 @@ raw_string2= "Thoink You";
   function flatten_list (list)= [ for (a = list) for (b = a) b ] ;         
       
 character_list  = generate_list(raw_string);
- character_list2  = generate_list(raw_string2); 
+// character_list2  = generate_list(raw_string2); 
+  echo(character_list);
   
 flat_list = flatten_list(character_list);
-flat_list2 = flatten_list(character_list2);
+//flat_list2 = flatten_list(character_list2);
    
-   BrailleDots(braille_characters, flat_list);
-   translate([0,dot_dist_next_row*-1, 0])
-  BrailleDots(braille_characters, flat_list2);
+   BrailleDotsLocation(braille_characters, flat_list);
+ //  translate([0,dot_dist_next_row*-1, 0])
+//  BrailleDotsLocation(braille_characters, flat_list2);
    
-  // places the dots to form teh braille characters
-module BrailleDots (list1,list2) {
+  
+ module BailleDots(radius,height ) {
+    intersection(){
+        cylinder(h=height, r=radius, $fn=16);
+        
+        // (height/2)+((radius*2)^2/(8*height)) returns the radius of an arc based on hirght and width 
+        translate([0, 0, ((height/2)+((radius*2)^2/(8*height))-height)*-1])
+            sphere(r=(height/2)+((radius*2)^2/(8*height)), $fn=32);    
+}
+    
+ } 
+  
+ //variable to store the returned value from the search function
+ search_loc = undef;  
+ 
+  // places the dots to form the braille characters
+module BrailleDotsLocation (list1,list2) {
+   
+    // loop through the items in teh flattened list
    for ( h = [0 : len(list2)-1])
     { 
-  
+ 
   //aligns the center of the dots to the next cell reference square
  translate([h*(dot_dist_next_cell - dot_dist_same_cell), 0,0]) 
 
-    // check if the character is a capital letter
-   if (ord(list2[h]) >= 97 && ord(list2[h]) <= 122)  
-   {
-       // if the character is a upper case letter, subtract 32 to make it a lower case letter
-       // this just reduces the amount of character data, since the braille pattern is the same for both
-        for ( i = [0:len(list1[search(ord(list2[h])-32, list1)[0]][1])-1])
-         for (j = [0:len(list1[search(ord(list2[h])-32, list1)[0]][1][i])-1])
-             // only place dots where the is a "1" in the list
-            if(list1[search(ord(list2[h])-32, list1)[0]][1][i][j] == 1)
-                 color("yellow")
-                // place the dot using the vallues of h, i and j to incrememnt the location and set the height based on the plane
-                 translate([(h+j)*dot_dist_same_cell, (i)*-dot_dist_same_cell, (dot_radius - dot_height)*-1])
-                   sphere(dot_radius, $fn=20);
-                 
-         }
-    
-   else 
-   {
-       // process the characters with out any adjustment
-       for ( i = [0:len(list1[search(ord(list2[h]), list1)[0]][1])-1])
-         for (j = [0:len(list1[search(ord(list2[h]), list1)[0]][1][i])-1])
+  // check the braille_characrter list first object to see if it match the current character, if not 
+  // check the second object to see if it matches.  set either value to search_loc 
+ let( search_loc = is_num(search(ord(flat_list[h]), braille_characters)[0])  ? search(ord(flat_list[h]), braille_characters)  : search(ord(flat_list[h]), braille_characters, num_returns_per_match=0, index_col_num=1) )
+  
+        // loop through item that stores the letter position data
+         for ( i = [0:len(list1[search_loc[0]])-1])
+
+            // loop through the position data 
+            for (j = [0:len(list1[search_loc[0]][2][i])-1])
+                
               // only place dots where the is a "1" in the list
-             if(list1[search(ord(list2[h]), list1)[0]][1][i][j] == 1)
+             if(list1[search_loc[0]][2][i][j] == 1)
                  color("yellow")
-                 // place the dot using the vallues of h, i and j to incrememnt the location and set the height based on the plane
-                 translate([(h+j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,(dot_radius - dot_height)*-1])
-                   sphere(dot_radius, $fn=20);
              
-            
-
+                 // place the dot using the vallues of h, i and j to incrememnt the location 
+                 translate([(h+j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,0])
+             
+                    // call the module that set the shape of the dots
+                  BailleDots(dot_radius,dot_height )
+       
+   ;         
+    
          }
-     }
- }
+         
+    }
 
 
+/*
 // spaceing test references
  for (h = [0:4])
  for (i= [0:9])     
  translate([i*2*dot_dist_next_cell, dot_dist_next_row*h*-2-10,0])
      %cube([dot_dist_next_cell, dot_dist_next_row ,dot_height]);
-
+*/
 
      // braille backing
  for (i= [-1:len(flat_list)-1])     
