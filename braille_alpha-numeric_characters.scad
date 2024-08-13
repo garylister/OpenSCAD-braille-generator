@@ -61,7 +61,15 @@ dot_dist_next_row = 10; //[:10:15]
 
 /* [Output] */      
 
-Input_string = "'Hi' he said, 'I'm Gary'";   
+line_one = "hello world";   
+
+add_line_two = true;
+
+line_two = "test text";
+
+
+
+
 //The backing plate includes an empty cell on both sides
 Backing_plate=true;
 
@@ -155,72 +163,106 @@ braille_characters = [
 ];
 
 
+function line_list() = [ 
+  if (add_line_two) [line_one, line_two ]
+      else [line_one] ];
+
+ echo("l'ine_list = ", line_list());
+ echo("l'ine_list = ", line_list()[0]);    
+ echo("l'ine_list = ", line_list()[0][0]);  
+
 function generate_character_map_list(list) =  [
 
-
- for (a = [0 : len(list)-1] )  
+for (z = [ 0 : len(list)-1] ) [
     
-    // search the list to find the character location.  search("b", "abc") only seaches abc[0] for the item,
-    // so you need to use search("b", abc", num_returns_per_match=0, index_col_num=1) to check 
-    // abc[1]...[n].  search returns a list of locations the item was found ie [1] or and empty list ie [] if not found
-    // is_num(search("b", "abc")[0] lets us know if we found the item     
-        let( search_loc = is_num(search(ord(list[a]), braille_characters)[0])  ? search(ord(list[a]), braille_characters)  : search(ord(list[a]), braille_characters, num_returns_per_match=0, index_col_num=1) )
-
-        // assign b so we can get the previous index number and check that character
-        let (b = a ==0 ?  a :  a - 1)
-        
-        // assign c so we can get the next index number and check that character
-        let (c = a + 1)
-    
-      // if the current character is the first character and a numeric character.   concat  "#"  and the character
-      if ( ( a ==0) && ord(list[a]) >= 48 && ord(list[a]) <= 57)  [braille_characters[search(ord("⣰"), braille_characters)[0]][2], braille_characters[search_loc[0]][2] ]  
+     for (a = [0 : len(list[z])-1] )  
           
-               // if the previous character is not a number and the current character is a number, concat  "#"  and the character
-        else if   ( (ord(list[b]) <48  || ord(list[b]) >57) && (ord(list[a]) >= 48 && ord(list[a]) <= 57) ) [braille_characters[search(ord("⣰"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]]
-      
-                 // if the current character is the first character, is an uppercase character and the next character is an upper case character,  concat two braille capital indicators and the character
-        else if  (( a ==0) &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90) && (ord(list[c]) >= 65 && ord(list[c]) <= 90)  )  [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]] 
-        
-         // if the current character is the first character, is an upper case character and the next character is not an upper case characted,  concat the braille capital indicator and the character
-        else if  ( ( a == 0) &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90) &&  (ord(list[c]) < 65 || ord(list[c]) > 90)  )  [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]] 
-            
-          // if the previous character is not an upper case character, the current character is an uppar casr character and the next character is not a upper case character, concat the braille capital indicator and the current character
-         else if  ( ( a < len(list)-1) && (ord(list[b]) <65  || ord(list[b]) >90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) < 65 || ord(list[c]) > 90 )   )  [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]]  
-        
-         // if the previous character is not an upper case character, the current character is an upper case character and the next character is an upper case character, concat two capital characters and the current character
-        else if ( ( a < len(list)-1) &&(ord(list[b]) <65  || ord(list[b]) >90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) >= 65 && ord(list[c]) <= 90 ) )  [ braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2],  braille_characters[search_loc[0]][2] ]  
+         
+     
+        // search the list to find the character location.  search("b", "abc") only seaches abc[0] for the item,
+        // so you need to use search("b", abc", num_returns_per_match=0, index_col_num=1) to check 
+        // abc[1]...[n].  search returns a list of locations the item was found ie [1] or and empty list ie [] if not found
+        // is_num(search("b", "abc")[0] lets us know if we found the item     
+            let( search_loc = is_num(search(ord(list[z][a]), braille_characters)[0])  ? search(ord(list[z][a]), braille_characters)  : search(ord(list[z][a]), braille_characters, num_returns_per_match=0, index_col_num=1) )
     
-       // if the current character is not the last character, is an upper case character, has an upper case character before and an lower case character after it,  concat the current character and two capital characters after
-        else if (  ( a < len(list)-1) && (ord(list[b]) >= 65  && ord(list[b]) <= 90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) >= 97 && ord(list[c]) <= 122 )  )  [ braille_characters[search_loc[0]][2],  braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2] ]
+            // assign b so we can get the previous index number and check that character
+            let (b = a ==0 ?  a :  a - 1)
             
-        // if the current character is a double quote ( " ),  check if the current charcter location matches to a search result  location for (") that when one is added to the search location amd a modulo 2 operation is applied, the end result is zero. (ie, the list is "Hi", so the search results would be [0,3].  if the current character location is 3, it matches to the search result at [1] (the second one). if you take that value (1) and add 1 the result is 2, which when you apply a modulo 2 operator returns 0.  this means the value is even and therefore the second ( " ).  print the closing double quote character .  you have to search for the number assigned to the characters in the list, since this is a double glyph character
-        else if( ord(list[a])== 34 &&  ((search( a, search("\"",list,0)[0] )[0] + 1)%2 ) == 0 )  [braille_characters[search(1028810292,  braille_characters)[0]][2] ]
-    
-       // this works the exact same way as the double quote code above.  It's disable since if you have a contraction in a single quoted string (ie 'I'm Fine') it might be more confusing than just using open single quotes.  you have to search for the number assigned to the characters in the list, since this is a double glyph character
-//        else if( ord(list[a])== 39 &&  ((search( a, search("'",list,0)[0] )[0] + 1)%2 ) == 0 )  [braille_characters[search(1027210292,  braille_characters)[0]][2] ]
+            // assign c so we can get the next index number and check that character
+            let (c = a + 1)
+        
+          // if the current character is the first character and a numeric character.   concat  "#"  and the character
+          if ( ( a ==0) && ord(list[z][a]) >= 48 && ord(list[z][a]) <= 57)  flatten_compound_character_map_list( [braille_characters[search(ord("⣰"), braille_characters)[0]][2], braille_characters[search_loc[0]][2] ]  )
+              
+                   // if the previous character is not a number and the current character is a number, concat  "#"  and the character
+            else if   ( (ord(list[z][b]) <48  || ord(list[z][b]) >57) && (ord(list[z][a]) >= 48 && ord(list[z][a]) <= 57) ) flatten_compound_character_map_list( [braille_characters[search(ord("⣰"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]] )
+          
+                     // if the current character is the first character, is an uppercase character and the next character is an upper case character,  concat two braille capital indicators and the character
+            else if  (( a ==0) &&  (ord(list[z][a]) >= 65 && ord(list[z][a]) <= 90) && (ord(list[z][c]) >= 65 && ord(list[z][c]) <= 90)  )  flatten_compound_character_map_list( [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]]  )
             
-              //for anything else just pass the character
-              else    [ braille_characters[search_loc[0]][2]] 
-              ]             
+             // if the current character is the first character, is an upper case character and the next character is not an upper case characted,  concat the braille capital indicator and the character
+            else if  ( ( a == 0) &&  (ord(list[z][a]) >= 65 && ord(list[z][a]) <= 90) &&  (ord(list[z][c]) < 65 || ord(list[z][c]) > 90)  )  flatten_compound_character_map_list( [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]]  )
+                
+              // if the previous character is not an upper case character, the current character is an uppar casr character and the next character is not a upper case character, concat the braille capital indicator and the current character
+             else if  ( ( a < len(list[z])-1) && (ord(list[z][b]) <65  || ord(list[z][b]) >90)  &&  (ord(list[z][a]) >= 65 && ord(list[z][a]) <= 90 ) && (ord(list[z][c]) < 65 || ord(list[z][c]) > 90 )   )  flatten_compound_character_map_list( [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]]  )
+            
+             // if the previous character is not an upper case character, the current character is an upper case character and the next character is an upper case character, concat two capital characters and the current character
+            else if ( ( a < len(list[z])-1) &&(ord(list[z][b]) <65  || ord(list[z][b]) >90)  &&  (ord(list[z][a]) >= 65 && ord(list[z][a]) <= 90 ) && (ord(list[z][c]) >= 65 && ord(list[z][c]) <= 90 ) )  flatten_compound_character_map_list( [ braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2],  braille_characters[search_loc[0]][2] ]  )
+        
+           // if the current character is not the last character, is an upper case character, has an upper case character before and an lower case character after it,  concat the current character and two capital characters after
+            else if (  ( a < len(list[z])-1) && (ord(list[z][b]) >= 65  && ord(list[z][b]) <= 90)  &&  (ord(list[z][a]) >= 65 && ord(list[z][a]) <= 90 ) && (ord(list[z][c]) >= 97 && ord(list[z][c]) <= 122 )  )  flatten_compound_character_map_list( [ braille_characters[search_loc[0]][2],  braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2] ] )
+                
+            // if the current character is a double quote ( " ),  check if the current charcter location matches to a search result  location for (") that when one is added to the search location amd a modulo 2 operation is applied, the end result is zero. (ie, the list is "Hi", so the search results would be [0,3].  if the current character location is 3, it matches to the search result at [1] (the second one). if you take that value (1) and add 1 the result is 2, which when you apply a modulo 2 operator returns 0.  this means the value is even and therefore the second ( " ).  print the closing double quote character .  you have to search for the number assigned to the characters in the list, since this is a double glyph character
+            else if( ord(list[z][a])== 34 &&  ((search( a, search("\"",list[z],0)[0] )[0] + 1)%2 ) == 0 )  flatten_character_map_list( [braille_characters[search(1028810292,  braille_characters)[0]][2] ] )
+        
+           // this works the exact same way as the double quote code above.  It's disable since if you have a contraction in a single quoted string (ie 'I'm Fine') it might be more confusing than just using open single quotes.  you have to search for the number assigned to the characters in the list, since this is a double glyph character
+    //        else if( ord(list[z][a])== 39 &&  ((search( a, search("'",list[z],0)[0] )[0] + 1)%2 ) == 0 )  [braille_characters[search(1027210292,  braille_characters)[0]][2] ]
+                
+                  //for anything else just pass the character
+                  else   flatten_character_map_list( [ braille_characters[search_loc[0]][2]] )
+                      
+              ]    
+         ]         
 ;
 
 
+function flatten_line_list(list,x=0) =  ( x == 1) ? list :  flatten_line_list([ for (a = list) for (b = a) b ],x+1)  ;
 
-// flatten the list two times to get the characters at the correct depth              
+
+// flatten the list two times to get the characters at the correct depth    
+    // x=2 when no line_list          
  function flatten_character_map_list(list,x=0) =  ( x == 2) ? list :  flatten_character_map_list([ for (a = list) for (b = a) b ],x+1)  ;
      
-
+ function flatten_compound_character_map_list(list,x=0) =  ( x == 2) ? list :  flatten_character_map_list([ for (a = list) for (b = a) b ],x+1)  ;
+     
+ 
+flat_input_text = flatten_line_list(line_list());
+ 
+ echo("flat_input_text ", flat_input_text);
+ 
+//  flat_line_one = flatten_line_list(line_one);
+ 
+// echo("flat_line_one ", flat_line_one);
       
- character_map_list = generate_character_map_list(Input_string);
+ character_map_list = generate_character_map_list(flat_input_text);
+ 
+ echo("character_map_list " , character_map_list);
+  echo("character_map_list[0] " , character_map_list[0]);
+   echo("character_map_list[0][0] " , character_map_list[0][0]);
+  echo("character_map_list [1]" , character_map_list[1]);
  
 //  character_map_list2 = generate_character_map_list(Input_string2);
+ 
+ // this break the separation  between lines 
   
- flat_char_map_list = flatten_character_map_list(character_map_list);
+ //flat_char_map_list = flatten_character_map_list(character_map_list);
+ 
+echo("len(character_map_list)-1 " ,len(character_map_list)-1);
  
  // flat_char_map_list2 = flatten_character_map_list(character_map_list2);
   
- BrailleDotsLocation(flat_char_map_list,dot_radius,dot_height);
-if (Backing_plate == true)  back_plate(flat_char_map_list);
+ BrailleDotsLocation(character_map_list,dot_radius,dot_height);
+//if (Backing_plate == true)  back_plate(flat_char_map_list);
     
 //translate([0, dot_dist_next_cell*-1.75,0]){
 // BrailleDotsLocation(flat_char_map_list2,dot_radius,dot_height);
@@ -239,31 +281,43 @@ if (Backing_plate == true)  back_plate(flat_char_map_list);
      }
 } 
   
-  
+//  need to fix this so it works with teh new character map list 
+// the lines are separated into separate lists in teh list, so we need to 
+// iterate through the first list and then drop down the correct 
+// distance and iterate through the second line  
+
+
+
+
   // places the dots to form the braille characters
 module BrailleDotsLocation (list1,radius,height) {
        
 // loop through the items in the flattened list
-for ( h = [0 : len(list1)-1]) { 
-        for ( i = [0:len(list1[h])-1]) {
-                for (j = [0:len(list1[h][i])-1]) {
-                    
-                    // only place dots where the is a "1" in the list
-                    if(list1[h][i][j] == 1) {
-                        color("yellow")
+    
+for ( g = [0 : len(list1)-1]) { 
+    for ( h = [0 : len(list1[g])-1]) { 
+            for ( i = [0:len(list1[g][h])-1]) {
+                    for (j = [0:len(list1[g][h][i])-1]) {
                         
-                        // place the dot using the vallues of h, i and j to incrememnt the location 
-                        translate([(h)*(dot_dist_next_cell ), 0,0]) {
-                            translate([(j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,0]){
-                                BailleDots(radius,height );
+                        // only place dots where the is a "1" in the list
+                        if(list1[g][h][i][j] == 1) {
+                            color("yellow")
+                            
+                            // place the dot using the vallues of h, i and j to incrememnt the location 
+                           translate([0,(g*dot_dist_next_row)*-1,0]){
+                                translate([(h)*(dot_dist_next_cell ), 0,0]) {
+                                    translate([(j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,0]){
+                                    BailleDots(radius,height );
+                                }
                             }
-                        }
+                      }
                     }
                 }
-        }
-   }
+            }
+       }
+    }
 }
-        
+
 
      // braille backing includes one cell space at the begining and the end
 module back_plate(list) {
@@ -273,13 +327,13 @@ module back_plate(list) {
 }
 
 
-/*
+
 // spaceing test references
  for (h = [0:4])
  for (i= [-1:9])     
  translate([i*2*dot_dist_next_cell, dot_dist_next_row*h*-2-10,0])
      %cube([dot_dist_next_cell, dot_dist_next_row ,dot_height]);
-*/
+
 
 //echo(ord("⠠"));
 //echo(chr(10288));
