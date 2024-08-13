@@ -59,21 +59,21 @@ dot_dist_next_cell = 6.1; //[:5.1:6.8]
 //Range 10 - 15
 dot_dist_next_row = 10; //[:10:15]
 
-/* [Output] */      
-
-line_one = "";   
+/* [Input] */      
+// lines without characters will be ignored.  use spaces to fill
+line_one = "H3llo";   
 
 add_line_two = false;
 
-line_two = "";
+line_two = "W0rld!";
 
 add_line_three=false;
 
-line_three = "";
+line_three = "test";
 
 add_line_four =false;
 
-line_four= "";
+line_four= "TEXT";
 
 
 
@@ -174,8 +174,6 @@ braille_characters = [
 
 function generate_character_map_list(list) =  [
 
-
-
      for (a = [0 : len(list)-1] )  
       
         // search the list to find the character location.  search("b", "abc") only seaches abc[0] for the item,
@@ -210,13 +208,13 @@ function generate_character_map_list(list) =  [
             else if ( ( a < len(list)-1) &&(ord(list[b]) <65  || ord(list[b]) >90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) >= 65 && ord(list[c]) <= 90 ) )   [ braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2],  braille_characters[search_loc[0]][2] ]  
         
            // if the current character is not the last character, is an upper case character, has an upper case character before and an lower case character after it,  concat the current character and two capital characters after
-            else if (  ( a < len(list)-1) && (ord(list[b]) >= 65  && ord(list[b]) <= 90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) >= 97 && ord(list[c]) <= 122 )  )   [ braille_characters[search_loc[0]][2],  braille_characters[search2(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2] ] 
+            else if (  ( a < len(list)-1) && (ord(list[b]) >= 65  && ord(list[b]) <= 90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) >= 97 && ord(list[c]) <= 122 )  )   [ braille_characters[search_loc[0]][2],  braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2] ] 
                 
             // if the current character is a double quote ( " ),  check if the current charcter location matches to a search result  location for (") that when one is added to the search location amd a modulo 2 operation is applied, the end result is zero. (ie, the list is "Hi", so the search results would be [0,3].  if the current character location is 3, it matches to the search result at [1] (the second one). if you take that value (1) and add 1 the result is 2, which when you apply a modulo 2 operator returns 0.  this means the value is even and therefore the second ( " ).  print the closing double quote character .  you have to search for the number assigned to the characters in the list, since this is a double glyph character
             else if( ord(list[a])== 34 &&  ((search( a, search("\"",list,0)[0] )[0] + 1)%2 ) == 0 )   [braille_characters[search(1028810292,  braille_characters)[0]][2] ] 
         
            // this works the exact same way as the double quote code above.  It's disable since if you have a contraction in a single quoted string (ie 'I'm Fine') it might be more confusing than just using open single quotes.  you have to search for the number assigned to the characters in the list, since this is a double glyph character
-    //        else if( ord(list[a])== 39 &&  ((search( a, search("'",list,0)[0] )[0] + 1)%2 ) == 0 )  [braille_characters[search(1027210292,  braille_characters)[0]][2] ]
+    //        else if( ord(list[z][a])== 39 &&  ((search( a, search("'",list[z],0)[0] )[0] + 1)%2 ) == 0 )  [braille_characters[search(1027210292,  braille_characters)[0]][2] ]
                 
                   //for anything else just pass the character
                   else    [ braille_characters[search_loc[0]][2]] 
@@ -227,78 +225,55 @@ function generate_character_map_list(list) =  [
 
 
 // flatten the list two times to get the characters at the correct depth    
-    // x=2 when no line_list          
  function flatten_character_map_list(list,x=0) =  ( x == 2 ) ? list :  flatten_character_map_list([ for (a = list) for (b = a) b ],x+1)  ;
      
-  function flatten_list_list(list,x=0) =  ( x == 1 ) ? list :  flatten_line_list([ for (a = list) for (b = a) b ],x+1)  ;
-     
- // create list of the available lines
+ // if a line is not disabled and is not blank, add the line to the list
  function generate_line_list() = [ 
-//  if (add_line_four && len(line_four) > 0) [  flat_line_one_map  , flat_line_two_map , flat_line_three_map, flat_line_four_map]
-//   else if (add_line_three && len(line_three) > 0) [  flat_line_one_map  , flat_line_two_map , flat_line_three_map]
-// else  if (add_line_two && len(line_two) > 0) [  flat_line_one_map  , flat_line_two_map ]
-//      else [flat_line_one_map] 
-  
-// for (i = [0:len(verified_line_list)-1])
-//     if (verified_line_list[i] )  verified_line_list[i] 
-  
-  
+  if(len(flat_line_one_map) > 0) flat_line_one_map,
+  if( add_line_two && len(flat_line_two_map) > 0) flat_line_two_map,
+  if( add_line_three && len(flat_line_three_map) > 0) flat_line_three_map,
+  if( add_line_four && len(flat_line_four_map) > 0) flat_line_four_map
+     ];
 
-          ];
-     
+ // if a line is not disabled and is not blank, generate a character map for it
+ line_one_char_map = (len(line_one) > 0) ? generate_character_map_list(line_one): [];
+  echo("line_one_char_map ", line_one_char_map);
+ line_two_char_map = ( add_line_two && len(line_two) > 0) ? generate_character_map_list(line_two): [];
+  echo("line_two_char_map ", line_two_char_map);
+ line_three_char_map = ( add_line_three && len(line_three) > 0) ? generate_character_map_list(line_three): [];
+  echo("line_three_char_map ", line_three_char_map);
+  line_four_char_map = ( add_line_four && len(line_four) > 0) ? generate_character_map_list(line_four) : [];
+  echo("line_four_char_map ", line_four_char_map);
+ 
+  // flatten the character map lists to make sure they are at the correct depth    
+ flat_line_one_map = flatten_character_map_list(line_one_char_map);
+  echo("flat_line_one_map ", flat_line_one_map);
+  flat_line_two_map = flatten_character_map_list(line_two_char_map);
+  echo("flat_line_two_map ", flat_line_two_map);
+   flat_line_three_map = flatten_character_map_list(line_three_char_map);
+   echo("flat_line_three_map ", flat_line_three_map);
+   flat_line_four_map = flatten_character_map_list(line_four_char_map);
+   echo("flat_line_four_map ", flat_line_four_map);
 
-
-echo("line_one ", line_one);
- echo("line_two ", line_two);    
-echo("line_three ", line_three);
-echo("line_four ", line_four);
-     
-verified_line_list= [ line_one, 
-      (add_line_two && len(line_two)>0) ? line_two : false, 
-      (add_line_three && len(line_three)>0) ? line_three : false, 
-      (add_line_four && len(line_four)>0 ) ? line_four : false];
-     
-echo("verified_line_list " ,verified_line_list);
-
-line_list = generate_line_list();
-//line_list = flatten_character_map_list(generate_line_list());
-//ECHO: "line_list ", ["H", "3", "l", "l", "o", "W", "o", "r", "l", "d"]
-echo("line_list ",line_list);
-
-
-character_map=generate_character_map_list(line_list);
-echo("character_map ",character_map);
-echo("len_character_map ", len(character_map));
-
-flat_character_map = flatten_character_map_list(character_map);
-echo("flat_character_map ", flat_character_map);
-echo("len_flat_character_map ", len(flat_character_map));
-//
-// line_one_char_map = generate_character_map_list(line_one);
-// echo("line_one_char_map =",line_one_char_map);
-// line_two_char_map = generate_character_map_list(line_two);
-// line_three_char_map = generate_character_map_list(line_three);
-//  line_four_char_map = generate_character_map_list(line_four);
-// 
-//      
-// flat_line_one_map = flatten_character_map_list(line_one_char_map);
-//  flat_line_two_map = flatten_character_map_list(line_two_char_map);
-//   flat_line_three_map = flatten_character_map_list(line_three_char_map);
-//   flat_line_four_map = flatten_character_map_list(line_four_char_map);
-     
-
-
-//echo("generate_line_list() ", generate_line_list());
       
-
-
+line_list = generate_line_list();
+echo("line_list ", line_list);
   
- BrailleDotsLocation(character_map,dot_radius,dot_height);
+ BrailleDotsLocation(line_list,dot_radius,dot_height);
 // BrailleDotsLocation(test_list,dot_radius,dot_height);
 
-// if (Backing_plate == true)  back_plate(flat_character_map);
+ hull(){
+minkowski(){
     
-
+ if (Backing_plate == true)  back_plate(line_list);
+ 
+ // place the cylinder a negative value equal to the height you use for your backplate
+ translate([0,0,dot_height*-1]) {
+    color("red")
+  cylinder(h=dot_height, r=dot_radius, $fn=32);  
+}
+ }
+ }
   
 // generate the dots.  this gives a flat bottom and a spherical top
  module BailleDots(radius,height ) {
@@ -318,7 +293,6 @@ module BrailleDotsLocation (list1,radius,height) {
        
 // loop through the items in the flattened list
 for ( g = [0 : len(list1)-1]) { 
-    echo("g =", g)
     for ( h = [0 : len(list1[g])-1]) { 
             for ( i = [0:len(list1[g][h])-1]) {
                     for (j = [0:len(list1[g][h][i])-1]) {
