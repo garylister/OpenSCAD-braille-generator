@@ -4,7 +4,11 @@
 // https://en.wikipedia.org/wiki/Braille
 // https://symbl.cc/en/unicode/blocks/braille-patterns/
 // https://www.brailleauthority.org/ueb/symbols_list.pdf
- 
+// https://nfb.org/programs-services/braille-certification/literary-braille-transcribing
+// https://www.unicode.org/charts/
+//use this to find the glyph(s) you need and be able to copy it into a chr() to get the number(s)
+// https://onlineunicodetools.com/generate-unicode-range
+
 // https://www.ada.gov/law-and-regs/design-standards/2010-stds/
 // https://www.access-board.gov/ada/guides/chapter-7-signs/
 // US dot diameter 0.059 -0.063 in (1.5 - 1.6mm)
@@ -41,234 +45,259 @@
 // dot diameter  (1.0 - 1.7mm) 
 // dot height   (0.3 - 0.7 mm)
 
-// values that fit in all of the above criteria
-dot_height = .5;
-dot_diameter = 1.5;
+// values that fit in all of the above criteria. default values are for UEB
+/* [Dimensions] */
+//Range 0.3 - 0.9
+dot_height = .5; //[:0.3:0.9]
+//Range 1.0 - 1.7
+dot_diameter = 1.5; //[:1.0:1.7]
 dot_radius = dot_diameter/2;
-dot_dist_same_cell = 2.5;
-dot_dist_next_cell = 6;
-dot_dist_next_row = 10;
+//Range 2.0 - 2.8
+dot_dist_same_cell = 2.5; //[:2.0:2.8]
+//Default is 6.0 but .0 isn't registered.  Range 5.1 - 6.8
+dot_dist_next_cell = 6.1; //[:5.1:6.8]
+//Range 10 - 15
+dot_dist_next_row = 10; //[:10:15]
+
+/* [Output] */      
+Input_string = "\"H3llo W0rld!";   
+//The backing plate includes an empty cell on both sides
+Backing_plate=true;
+
+//Input_string2= "Thoink You";
+//Backing_plate2=true;
 
 
-// list or lists of alpha and numeric characters, along with space and #
-braille_characters = [  [32, 0,[[0,0],[0,0],[0,0]] ]/* space - 32 */, 
-[33, 0,[[0,0],[1,1],[1,0]] ]/*exclamation mark - 33 */,
-[34, 0,[[0,0],[1,0],[1,1]] ]/*double quote - 34 */,
-[38,0,[ [[0,1],[0,0],[0,0]],[[1,1],[1,0],[1,1]] ] ]/* ampersand  - 38 */,
-[35, 0,[[0,1],[0,1],[1,1]] ]/* number isgn - 35 */ , 
-[39, 0,[[0,0],[0,0],[1,0]] ]/* apostrophe - 39 */, 
-[44, 0,[[0,0],[1,0],[0,0]] ]/* comma - 44 */,
-[46, 0,[[0,0],[1,1],[0,1]] ]/* period - 46 */, 
-[48, 0,[[0,1],[1,1],[0,0]] ]/* 0 - 48 */,  
-[49, 0,[[1,0],[0,0],[0,0]] ]/* 1 - 49 */, 
-[50, 0,[[1,0],[1,0],[0,0]] ]/* 2 - 50 */, 
-[51, 0,[[1,1],[0,0],[0,0]] ]/* 3 -  51 */, 
-[52, 0,[[1,1],[0,1],[0,0]] ]/* 4 - 52 */,  
-[53, 0,[[1,0],[0,1],[0,0]] ]/* 5 - 53 */,  
-[54, 0,[[1,1],[1,0],[0,0]] ]/* 6 - 54 */,  
-[55, 0,[[1,1],[1,1],[0,0]] ]/* 7 - 55 */, 
-[56, 0,[[1,0],[1,1],[0,0]] ]/* 8 - 56 */,  
-[57, 0,[[0,1],[1,0],[0,0]] ]/* 9 - 57 */,  
-[63, 0,[[0,0],[1,0],[1,1]] ]/*questionmark - 63*/,
-[65,97,[[1,0],[0,0],[0,0]] ]/* A - 65 */,  
-[66,98,[[1,0],[1,0],[0,0]] ]/* B - 66 */, 
-[67,99,[[1,1],[0,0],[0,0]] ]/*C - 67 */, 
-[68,100,[[1,1],[0,1],[0,0]] ]/*D - 68 */,  
-[69,101,[[1,0],[0,1],[0,0]] ]/* E - 69 */,  
-[70,102,[[1,1],[1,0],[0,0]] ]/* F - 70 */,  
-[71,103,[[1,1],[1,1],[0,0]] ]/* G - 71 */,  
-[72,104,[[1,0],[1,1],[0,0]] ]/* H - 72 */,  
-[73,105,[[0,1],[1,0],[0,0]] ]/* I - 73 */,  
-[74,106,[[0,1],[1,1],[0,0]] ]/* J - 74 */,  
-[75,107,[ [ [1,0],[0,0],[1,0]] ] ]/* K - 75 */, 
-[76,108,[[1,0],[1,0],[1,0]] ]/* L - 76 */, 
-[77,109,[[1,1],[0,0],[1,0]] ]/* M - 77 */, 
-[78,110,[[1,1],[0,1],[1,0]] ]/* N - 78 */, 
-[79,111,[[1,0],[0,1],[1,0]] ]/* O - 79 */, 
-[80,112,[ [ [1,1],[1,0],[1,0]] ] ]/* P - 80 */, 
-[81,113,[ [ [1,1],[1,1],[1,0]] ] ]/* Q - 81 */,  
-[82,114,[[1,0],[1,1],[1,0]] ]/* R - 82 */, 
-[83,115,[[0,1],[1,0],[1,0]] ]/* S - 83 */, 
-[84,116,[[0,1],[1,1],[1,0]] ]/* T - 84 */, 
-[85,117,[[1,0],[0,0],[1,1]] ]/* U - 85 */, 
-[86,118,[[1,0],[1,0],[1,1]] ]/* V - 86 */, 
-[87,119,[[0,1],[1,1],[0,1]] ]/* W - 87 */, 
-[88,120,[[1,1],[0,0],[1,1]] ]/* X - 88 */, 
-[89,121,[[1,1],[0,1],[1,1]] ]/* Y - 89 */, 
-[90,122,[[1,0],[0,1],[1,1]] ]/* Z - 90 */, 
-[124,0,[ [[0,1],[0,1],[0,1]], [[1,0],[1,1],[0,1]] ] ] /* vertical line(pipe) 124 */,
-[2880,0,[[0,0],[0,0],[0,1]] ]/*capital letter*/ ];
+// list  of alpha, numeric and special characters
+// each item in the list has three items, two numbers and a list of lists
+// the two numbers allow upper and lower case characters to be mapped to the same 
+// braille character.  the "0" is a place holder, to prevent an undefined value
+// [ number1, number2, [  [[ list_item1 ],[ list_item2 ],[ list_item3]] ] ]
+//  [ identifier1, identifier2, [ [[ top_left_dot ],[ top_right_dot ] ], [ [ middle_left_dot ], [middle_right_dot ], [bottom_left_dot],[bottom_right_dot] ]] ] ]
+/* [Hidden] */
+braille_characters = [  
+[32,0,[ [[0,0],[0,0],[0,0]] ] ] /* space - 32 */, 
+[33,0,[ [[0,0],[1,1],[1,0]] ] ] /*exclamation mark ! - 33 */,
+[34,0,[ [[0,1],[0,1],[0,0]], [[0,0],[1,0],[1,1]] ] ] /* double quotation mark  opening  " - 34 */,
+[38,0,[ [[0,1],[0,0],[0,0]], [[1,1],[1,0],[1,1]] ] ]/* ampersand  & - 38 */,
+[35,0,[ [[0,1],[0,1],[0,1]], [[1,1],[0,1],[0,1]] ] ] /* pound # - 35 */ , 
+[36,0,[ [[0,1],[0,0],[0,0]], [[0,1],[1,0],[1,0]] ] ] /* dollar $ - 36 */,
+[37,0,[ [[0,1],[0,0],[0,1]], [[0,0],[0,1],[1,1]] ] ] /* percent % - 37 */,
+[39,0,[ [[0,0],[0,0],[0,1]], [[0,0],[1,0],[1,1]] ] ] /* single quotation mark opening ' - 39 */, 
+[40,0,[ [[0,0],[0,1],[0,0]], [[1,0],[1,0],[0,1]] ] ] /* parenthesis open ( - 40 */,
+[41,0,[ [[0,0],[0,1],[0,0]], [[0,1],[0,1],[1,0]] ] ] /* parenthesis close ) - 41 */,
+[42,0,[ [[0,0],[0,1],[0,0]], [[0,0],[0,1],[1,0]] ] ] /* asterisk * - 42 */,
+[43,0,[ [[0,0],[0,1],[0,0]], [[0,0],[1,1],[1,0]] ] ] /* plus + - 43 */,
+[44,0,[ [[0,0],[1,0],[0,0]] ] ] /* comma , - 44 */,
+[45,0,[ [[0,0],[0,0],[1,1]] ] ] /* hyphen/minus -  - 45 */,
+[46,0,[ [[0,0],[1,1],[0,1]] ] ] /* period . - 46 */, 
+[47,0,[ [[0,1],[0,1],[0,1]], [[0,1],[0,0],[1,0]] ] ] /* forward slash / - 47 */,
+[48,0,[ [[0,1],[1,1],[0,0]] ] ] /* 0 - 48 */,  
+[49,0,[ [[1,0],[0,0],[0,0]] ] ] /* 1 - 49 */, 
+[50,0,[ [[1,0],[1,0],[0,0]] ] ] /* 2 - 50 */, 
+[51,0,[ [[1,1],[0,0],[0,0]] ] ] /* 3 -  51 */, 
+[52,0,[ [[1,1],[0,1],[0,0]] ] ] /* 4 - 52 */,  
+[53,0,[ [[1,0],[0,1],[0,0]] ] ] /* 5 - 53 */,  
+[54,0,[ [[1,1],[1,0],[0,0]] ] ] /* 6 - 54 */,  
+[55,0,[ [[1,1],[1,1],[0,0]] ] ] /* 7 - 55 */, 
+[56,0,[ [[1,0],[1,1],[0,0]] ] ] /* 8 - 56 */,  
+[57,0,[ [[0,1],[1,0],[0,0]] ] ] /* 9 - 57 */,  
+[58,0,[ [[0,0],[1,1],[0,0]] ] ] /* colon : - 58*/,
+[59,0,[ [[0,0],[1,0],[1,0]] ] ] /* semicolon : - 59*/,
+[60,0,[ [[0,1],[0,0],[0,0]], [[1,0],[1,0],[0,1]] ] ] /* angle bracket open/ less than < - 60 */,
+[61,0,[ [[0,0],[0,1],[0,0]], [[0,0],[1,1],[1,1]] ] ] /* equals = - 61 */,
+[62,0,[ [[0,1],[0,0],[0,0]], [[0,1],[0,1],[1,0]] ] ] /* angle bracket close/ greater than < - 62 */,
+[63,0,[ [[0,0],[1,0],[1,1]] ] ] /*questionmark ? - 63*/,
+[64,0,[ [[0,1],[0,0],[0,0]], [[1,0],[0,0],[0,0]] ] ] /* commercial at @ - 64 */,
+[65,97,[ [[1,0],[0,0],[0,0]] ] ] /* A - 65, a - 97 */,  
+[66,98,[ [[1,0],[1,0],[0,0]] ] ] /* B - 66, b - 98 */, 
+[67,99,[ [[1,1],[0,0],[0,0]] ] ] /*C - 67, c - 99 */, 
+[68,100,[ [[1,1],[0,1],[0,0]] ] ] /*D - 68, d - 100 */,  
+[69,101,[ [[1,0],[0,1],[0,0]] ] ] /* E - 69, e - 101 */,  
+[70,102,[ [[1,1],[1,0],[0,0]] ] ] /* F - 70, f - 102 */,  
+[71,103,[ [[1,1],[1,1],[0,0]] ] ] /* G - 71, g - 103 */,  
+[72,104,[ [[1,0],[1,1],[0,0]] ] ] /* H - 72, h - 104 */,  
+[73,105,[ [[0,1],[1,0],[0,0]] ] ] /* I - 73, i - 105 */,  
+[74,106,[ [[0,1],[1,1],[0,0]] ] ] /* J - 74, j - 106 */,  
+[75,107,[ [[1,0],[0,0],[1,0]] ] ]/* K - 75, k - 107 */, 
+[76,108,[ [[1,0],[1,0],[1,0]] ] ] /* L - 76, l - 108 */, 
+[77,109,[ [[1,1],[0,0],[1,0]] ] ] /* M - 77, m - 109 */, 
+[78,110,[ [[1,1],[0,1],[1,0]] ] ] /* N - 78, n - 110 */, 
+[79,111,[ [[1,0],[0,1],[1,0]] ] ] /* O - 79, o - 111 */, 
+[80,112,[ [[1,1],[1,0],[1,0]] ] ]/* P - 80, p - 112 */, 
+[81,113,[ [[1,1],[1,1],[1,0]] ] ]/* Q - 81, q - 113 */,  
+[82,114,[ [[1,0],[1,1],[1,0]] ] ] /* R - 82, r - 114 */, 
+[83,115,[ [[0,1],[1,0],[1,0]] ] ] /* S - 83, s - 115 */, 
+[84,116,[ [[0,1],[1,1],[1,0]] ] ] /* T - 84, t - 116 */, 
+[85,117,[ [[1,0],[0,0],[1,1]] ] ] /* U - 85, u - 117 */, 
+[86,118,[ [[1,0],[1,0],[1,1]] ] ] /* V - 86, v - 118 */, 
+[87,119,[ [[0,1],[1,1],[0,1]] ] ] /* W - 87, w - 119 */, 
+[88,120,[ [[1,1],[0,0],[1,1]] ] ] /* X - 88, x - 120 */, 
+[89,121,[ [[1,1],[0,1],[1,1]] ] ] /* Y - 89, y - 121 */, 
+[90,122,[ [[1,0],[0,1],[1,1]] ] ] /* Z - 90, z - 122 */, 
+[91,0,[ [[0,1],[0,0],[0,1]], [[1,0],[1,0],[0,1]] ] ] /* square bracket open [ - 91 */,
+[92,0,[ [[0,1],[0,1],[0,1]], [[1,0],[0,0],[0,1]] ] ] /* backslash \ - 92 */,
+[93,0,[ [[0,1],[0,0],[0,1]], [[0,1],[0,1],[1,0]] ] ] /* square bracket close ] - 93 */,
+[94,0,[ [[0,1],[0,1],[0,0]], [[1,1],[0,0],[0,1]] ] ] /* caret/circumflex ^ - 94 */, 
+[95,0,[ [[0,1],[0,0],[0,1]], [[0,0],[0,0],[1,1]] ] ] /* under score _ - 95 */,
+[96,0,[ [[0,1],[0,1],[0,0]], [[1,0],[0,0],[0,1]] ] ] /* grave accent ` - 96 */,
+[123,0,[ [[0,1],[0,1],[0,1]], [[1,0],[1,0],[0,1]] ] ] /* curly bracket open { - 123 */,
+[124,0,[ [[0,1],[0,1],[0,1]], [[1,0],[1,1],[0,1]] ] ] /* vertical line(pipe) | - 124 */,
+[125,0,[ [[0,1],[0,1],[0,1]], [[0,1],[0,1],[1,0]] ] ] /* curly bracket close } - 125 */,
+[126,0,[ [[0,1],[0,0],[0,0]], [[0,0],[0,1],[1,0]] ] ] /* tilde ~ - 126 */,
+[191,0,[ [[0,1],[0,1],[0,0]], [[0,0],[0,1],[0,1]], [[0,0],[0,1],[1,1]] ] ] /* inverted question mark ¿ - 191 */,
+[10368,0,[ [[0,0],[0,0],[0,1]] ] ]  /*capital letter - ⢀ */ ,
+[10480,0,[ [[0,1],[0,1],[1,1]] ] ]  /*numeric - ⣰ */ ,
+// using the numbers for both glyphs to prevent using an unwanted character
+[1028810292,0,[ [[0,1],[0,1],[0,0]], [[0,0],[0,1],[1,1]] ] ] /* double quotation mark closiing  " - ⠰ ⠴ */,
+[1027210292,0,[ [[0,0],[0,0],[0,1]], [[0,0],[0,1],[1,1]] ] ]  /*single quotation mark closiing  ' - ⠠ ⠴ */,
+];
 
 
- // variable to allow us to access a previous inex in a list
+/* [Hidden] */
+ // variable to allow us to access a previous index in a list
 b =0;
+
+/* [Hidden] */
+// variable to allow us to access the next index in a list
+c = 0;
    
-       
-raw_string = "|q|qq";   
+/* [Hidden] */
+// variable to track if a double quote should be opening or closing
+double_quote = 1;
+
+/* [Hidden] */
+// variable to track if a single quote should be opening or closing
+single_quote = 0;
 
 
-raw_string2= "Thoink You";
-
-echo(braille_characters[45][2]);
- 
-  function generate_character_list (string) =[ for (a = [0 : len(string)-1] )  
-      
-    search_loc = is_num(search(ord(flat_list[h]), braille_characters)[0])  ? search(ord(flat_list[h]), braille_characters)  : search(ord(flat_list[h]), braille_characters, num_returns_per_match=0, index_col_num=1)
-  
-     if (a==0)  
-          // check if the character is the first character and a numeric character and concat  "#"  if so
-     if (a == 0 && ord(string[a]) >= 48 && ord(string[a]) <= 57)  ["#", string[a]]  
-      
-         // check if the character is a capital alpha character and concst the braille capital indicator 
-          else if  ( ord(string[a]) >= 65 && ord(string[a]) <= 90 )  ["ୀ", string[a]]  
-              //for anything else just pass the character
-              else     [ string[a]]      
-              
-    else  
-        // assign b so we can get the previous index number and charck that character
-        let (b = a-1)
-     // check if the previous character is a "space" and the current character is numeric and concat  "#"  if so
-     if ( (ord(string[b]) == 32 && ord(string[a]) >= 48 && ord(string[a]) <= 57) ) ["#", string[a]]  
-         // check if the previous  character is not a number while the current character is a number and concat  "#"  if so
-        // there appears to be a limit of three checks in an if statement, hence the two separate lines
-         else if   ((ord(string[b]) <48  && ord(string[a]) >= 48 && ord(string[a]) <= 57 ))["#", string[a]]  
-         else if   ((ord(string[b]) >57 &&  ord(string[a]) >= 48 && ord(string[a]) <= 57 ))["#", string[a]]  
-          // check if the character is a capital alpha character and concat the braille capital indicator 
-         else if  ( ord(string[a]) >= 65 && ord(string[a]) <= 90 )  ["ୀ", string[a]]  
-              //for anything else just pass the character
-              else     [ string[a]]  ]     ;
-
-
-    // calls the fucntion to parse the string and removes any nested lists in the provided list
-  function flatten_list (list)= [ for (a = list) for (b = a) b ] ;         
-      
-character_list  = generate_character_list(raw_string);
-// character_list2  = generate_list(raw_string2); 
-
-flat_list = flatten_list(character_list);
-//flat_list2 = flatten_list(character_list2);
-   
-   BrailleDotsLocation(braille_characters, flat_list,dot_radius,dot_height);
- //  translate([0,dot_dist_next_row*-1, 0])
-//  BrailleDotsLocation(braille_characters, flat_list2);
-   
-  
- module BailleDots(radius,height ) {
-     difference(){
-     circle(dot_radius, $fn=32);
-         circle(.4 , $fn=32);
-     }
-  /*  intersection(){
-        cylinder(h=height, r=radius, $fn=16);
-        
-        // (height/2)+((radius*2)^2/(8*height)) returns the radius of an arc based on hirght and width 
-        translate([0, 0, ((height/2)+((radius*2)^2/(8*height))-height)*-1])
-            sphere(r=(height/2)+((radius*2)^2/(8*height)), $fn=32);    
-}*/
+function generate_character_map_list(list) =
+[ for (a = [0 : len(list)-1] )
     
- } 
+    
+    // search the list to find the character location.  search("b", "abc") only seaches abc[0] for the item,
+    // so you need to use search("b", abc", num_returns_per_match=0, index_col_num=1) to check 
+    // abc[1]...[n].  search returns a list of locations the item was found ie [1] or and empty list ie [] if not found
+    // is_num(search("b", "abc")[0] lets us know if we found the item
+    let( search_loc = is_num(search(ord(list[a]), braille_characters)[0])  ? search(ord(list[a]), braille_characters)  : search(ord(list[a]), braille_characters, num_returns_per_match=0, index_col_num=1) )
+
+        // assign b so we can get the previous index number and check that character
+        let (b = a ==0 ?  a :  a - 1)
+        
+        // assign c so we can get the next index number and check that character
+        let (c = a + 1)
+    
+        let(dq = double_quote)
+
+      // if the current character is the first character and a numeric character.   concat  "#"  and the character
+      if ( ( a ==0) && ord(list[a]) >= 48 && ord(list[a]) <= 57)  [braille_characters[search(ord("⣰"), braille_characters)[0]][2], braille_characters[search_loc[0]][2] ]  
+          
+               // if the previous character is not a number and the current character is a number, concat  "#"  and the character
+        else if   ( (ord(list[b]) <48  || ord(list[b]) >57) && (ord(list[a]) >= 48 && ord(list[a]) <= 57) ) [braille_characters[search(ord("⣰"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]]
+      
+                 // if the current character is the first character, is an uppercase character and the next character is an upper case character,  concat two braille capital indicators and the character
+        else if  (( a ==0) &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90) && (ord(list[c]) >= 65 && ord(list[c]) <= 90)  )  [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]] 
+        
+         // if the current character is the first character, is an upper case character and the next character is not an upper case characted,  concat the braille capital indicator and the character
+        else if  ( ( a == 0) &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90) &&  (ord(list[c]) < 65 || ord(list[c]) > 90)  )  [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]] 
+            
+          // if the previous character is not an upper case character, the current character is an uppar casr character and the next character is not a upper case character, concat the braille capital indicator and the current character
+         else if  ( ( a < len(list)-1) && (ord(list[b]) <65  || ord(list[b]) >90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) < 65 || ord(list[c]) > 90 )   )  [braille_characters[search(ord("⢀"), braille_characters)[0]][2], braille_characters[search_loc[0]][2]]  
+        
+         // if the previous character is not an upper case character, the current character is an upper case character and the next character is an upper case character, concat two capital characters and the current character
+        else if ( ( a < len(list)-1) &&(ord(list[b]) <65  || ord(list[b]) >90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) >= 65 && ord(list[c]) <= 90 ) )  [ braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2],  braille_characters[search_loc[0]][2] ]  
+    
+       // if the current character is not the last character, is an upper case character, has an upper case character before and an lower case character after it,  concat the current character and two capital characters after
+        else if (  ( a < len(list)-1) && (ord(list[b]) >= 65  && ord(list[b]) <= 90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) >= 97 && ord(list[c]) <= 122 )  )  [ braille_characters[search_loc[0]][2],  braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2] ]
+            
+        // if the current character is a double quote ( " ) and double_quote equals zero, increment the double_quote variable and print the character
+        else if ( a == 34 ) echo("double_quote = " , double_quote)
+            //&& dq == 0 )  [ braille_characters[search_loc[0]][2] ]
+ // double_quote = double_quote + 1  
+            
+              //for anything else just pass the character
+              else     [ braille_characters[search_loc[0]][2]] ]
+                  ;
+
+// [ braille_characters[search_loc[0]][2] ]
+
+
+// flatten the list two times to get the characters  are at the correct depth              
+ function flatten_character_map_list(list,x=0) =  ( x == 2) ? list :  flatten_character_map_list([ for (a = list) for (b = a) b ],x+1)  ;
+     
+
+      
+ character_map_list = generate_character_map_list(Input_string);
+ 
+//  character_map_list2 = generate_character_map_list(Input_string2);
   
- //variable to store the returned value from the search function
-
-
+ flat_char_map_list = flatten_character_map_list(character_map_list);
+ 
+//  flat_char_map_list2 = flatten_character_map_list(character_map_list2);
+  
+ BrailleDotsLocation(flat_char_map_list,dot_radius,dot_height);
+if (Backing_plate == true)  back_plate(flat_char_map_list);
+    
+//translate([0, dot_dist_next_cell*-1.75,0]){
+// BrailleDotsLocation(flat_char_map_list2,dot_radius,dot_height);
+//if (Backing_plate2 == true)  back_plate(flat_char_map_list2);
+//}
+  
+// generate the dots.  this gives a flat bottom and a spherical top
+ module BailleDots(radius,height ) {
+     intersection(){
+         cylinder(h=height, r=radius, $fn=16);
+         
+         // (height/2)+((radius*2)^2/(8*height)) returns the radius of an arc based on height and width
+         translate([0, 0, ((height/2)+((radius*2)^2/(8*height))-height)*-1]){
+             sphere(r=(height/2)+((radius*2)^2/(8*height)), $fn=32); 
+         }
+     }
+} 
+  
   
   // places the dots to form the braille characters
-module BrailleDotsLocation (list1,list2,radius,height) {
-  search_loc = undef;  
-     
-    // loop through the items in teh flattened list
-   for ( h = [0 : len(list2)-1])
-    { 
-      
-  //aligns the center of the dots to the next cell reference square
- // translate([(h)*(dot_dist_next_cell - dot_dist_same_cell), 0,0]) 
-
-  // check the braille_characrter list first object to see if it match the current character, if not 
-  // check the second object to see if it matches.  set either value to search_loc 
-        let( search_loc = is_num(search(ord(flat_list[h]), braille_characters)[0])  ? search(ord(flat_list[h]), braille_characters)  : search(ord(flat_list[h]), braille_characters, num_returns_per_match=0, index_col_num=1) )
-  
- //      echo("list1[search_loc[0]]" ,list1[search_loc[0]])
-        echo("list1[search_loc[0]][2]" ,list1[search_loc[0]][2])
-       echo ("len(list1[search_loc[0]][2])-" ,len(list1[search_loc[0]][2]))
-        if (len(list1[search_loc[0]][2]) > 1) {
-            for ( k =  [0:len(list1[search_loc[0]][2])-1]) {
- //        echo("h = ", h, " k = ", k)   
-                let( multi_char = k)
+module BrailleDotsLocation (list1,radius,height) {
+       
+// loop through the items in the flattened list
+for ( h = [0 : len(list1)-1]) { 
+        for ( i = [0:len(list1[h])-1]) {
+                for (j = [0:len(list1[h][i])-1]) {
+                    
+                    // only place dots where the is a "1" in the list
+                    if(list1[h][i][j] == 1) {
+                        color("yellow")
+                        
+                        // place the dot using the vallues of h, i and j to incrememnt the location 
+                        translate([(h)*(dot_dist_next_cell ), 0,0]) {
+                            translate([(j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,0]){
+                                BailleDots(radius,height );
+                            }
+                        }
+                    }
+                }
+        }
+   }
+}
         
- //       translate([(h)*(dot_dist_next_cell ), 0,0])  
-//      echo("list[k] ", list1[search_loc[0]][2])
-        // loop through item that stores the letter position data
-                    for ( i = [0:len(list1[search_loc[0]][2][k])-1]) {
-          
-//           echo("h = ", h, " k = ", k, " i = ", i)  
-    //          echo("list[i] " ,list1[search_loc[0]][2][k])
-    //            echo(len(list1[search_loc[0]][2][k]))
-            // loop through the position data 
-                        for (j = [0:len(list1[search_loc[0]][2][k][i])-1]) {
-//             echo("h = ", h, " k = ", k, " i = ", i, " j = ",i)  
-    //        echo("list[j] ",list1[search_loc[0]][2][k][i])
-              // only place dots where the is a "1" in the list
-            
-                            if(list1[search_loc[0]][2][k][i][j] == 1) {
-                 color("yellow")
-   //          translate([(h+k+1)*(dot_dist_next_cell)- dot_dist_same_cell, 0,0]) translate([(h+k+1)*(dot_dist_next_cell)- dot_dist_same_cell, 0,0]) 
-             echo("multi-dot cell translate ((",k,"+",h,")*",dot_dist_next_cell, "0,0])")
-  //           echo("multi-dot translate([",(h+j*dot_dist_same_cell), (i)*-dot_dist_same_cell, "0])")
-                 // place the dot using the vallues of h, i and j to incrememnt the location 
-               translate([((k+h)*(dot_dist_next_cell)),0,0]) {
-                 translate([((h+j)*dot_dist_same_cell), (i)*-dot_dist_same_cell,0]) {
-    //                    translate([(k+h)*dot_dist_next_cell, 0,0])
-                    // call the module that set the shape of the dots
-                  BailleDots(radius,height );
-                 }
-                }
-                }
-     
-         }
-         }
-         }
-         }
-         
-      //   if (len(list1[search_loc[0]][2])-1 == 1) {
-         else {
-         echo(list1[search_loc[0]][2][0])
-       // process the characters with out any adjustment
-       for ( i = [0:len(list1[search_loc[0]][2][0])-1]) {
-         for (j = [0:len(list1[search_loc[0]][2][0][i])-1]) {
-              // only place dots where the is a "1" in the list
-             if(list1[search_loc[0]][2][0][i][j] == 1) {
-                 color("yellow")
-                 // place the dot using the vallues of h, i and j to incrememnt the location and set the height based on the plane
-       //     translate([(h)*(dot_dist_next_cell -dot_dist_same_cell), 0,0]) 
-             translate([(h)*(dot_dist_next_cell ), 0,0]) {
-                 translate([(h+j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,0]){
-                    BailleDots(radius,height );
-                 }
-             }
-             
-             }
-         }
-         }
-     }
-         }
-   ;         
-    
-         }
-         
-    
 
+     // braille backing includes one cell space at the begining and the end
+module back_plate(list) {
+ for (i= [-1:len(list)])     
+ translate([(i*dot_dist_next_cell) , dot_dist_next_row*-.75,(dot_radius)*-2])
+     cube([dot_dist_next_cell, dot_dist_next_row ,dot_radius*2]);     
+}
 
-
-// spaceing test references
- for (h = [0:4])
- for (i= [0:9])     
- translate([i*2*dot_dist_next_cell, dot_dist_next_row*h*-2-10,0])
-     %cube([dot_dist_next_cell, dot_dist_next_row ,dot_height]);
 
 /*
-     // braille backing
- for (i= [-1:len(flat_list)-1])     
- translate([(i*dot_dist_next_cell+(dot_radius*1.5)) , dot_dist_next_row*-.75,(dot_radius)*-2])
-     cube([dot_dist_next_cell, dot_dist_next_row ,dot_radius*2]);      
- */
- 
+// spaceing test references
+ for (h = [0:4])
+ for (i= [-1:9])     
+ translate([i*2*dot_dist_next_cell, dot_dist_next_row*h*-2-10,0])
+     %cube([dot_dist_next_cell, dot_dist_next_row ,dot_height]);
+*/
+
+//echo(ord("⠠"));
+//echo(chr(10288));
+//echo(ord("⠴")); 
+//echo(chr(10292));
