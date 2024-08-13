@@ -60,11 +60,12 @@ dot_dist_next_cell = 6.1; //[:5.1:6.8]
 dot_dist_next_row = 10; //[:10:15]
 
 /* [Output] */      
-Input_string = "\"H3llo W0rld!";   
+
+Input_string = "'Hi' he said, 'I'm Gary'";   
 //The backing plate includes an empty cell on both sides
 Backing_plate=true;
 
-//Input_string2= "Thoink You";
+//Input_string2= "\"H3llo W0rld!\"";
 //Backing_plate2=true;
 
 
@@ -154,32 +155,16 @@ braille_characters = [
 ];
 
 
-/* [Hidden] */
- // variable to allow us to access a previous index in a list
-b =0;
-
-/* [Hidden] */
-// variable to allow us to access the next index in a list
-c = 0;
-   
-/* [Hidden] */
-// variable to track if a double quote should be opening or closing
-double_quote = 1;
-
-/* [Hidden] */
-// variable to track if a single quote should be opening or closing
-single_quote = 0;
+function generate_character_map_list(list) =  [
 
 
-function generate_character_map_list(list) =
-[ for (a = [0 : len(list)-1] )
-    
+ for (a = [0 : len(list)-1] )  
     
     // search the list to find the character location.  search("b", "abc") only seaches abc[0] for the item,
     // so you need to use search("b", abc", num_returns_per_match=0, index_col_num=1) to check 
     // abc[1]...[n].  search returns a list of locations the item was found ie [1] or and empty list ie [] if not found
-    // is_num(search("b", "abc")[0] lets us know if we found the item
-    let( search_loc = is_num(search(ord(list[a]), braille_characters)[0])  ? search(ord(list[a]), braille_characters)  : search(ord(list[a]), braille_characters, num_returns_per_match=0, index_col_num=1) )
+    // is_num(search("b", "abc")[0] lets us know if we found the item     
+        let( search_loc = is_num(search(ord(list[a]), braille_characters)[0])  ? search(ord(list[a]), braille_characters)  : search(ord(list[a]), braille_characters, num_returns_per_match=0, index_col_num=1) )
 
         // assign b so we can get the previous index number and check that character
         let (b = a ==0 ?  a :  a - 1)
@@ -187,8 +172,6 @@ function generate_character_map_list(list) =
         // assign c so we can get the next index number and check that character
         let (c = a + 1)
     
-        let(dq = double_quote)
-
       // if the current character is the first character and a numeric character.   concat  "#"  and the character
       if ( ( a ==0) && ord(list[a]) >= 48 && ord(list[a]) <= 57)  [braille_characters[search(ord("⣰"), braille_characters)[0]][2], braille_characters[search_loc[0]][2] ]  
           
@@ -210,19 +193,20 @@ function generate_character_map_list(list) =
        // if the current character is not the last character, is an upper case character, has an upper case character before and an lower case character after it,  concat the current character and two capital characters after
         else if (  ( a < len(list)-1) && (ord(list[b]) >= 65  && ord(list[b]) <= 90)  &&  (ord(list[a]) >= 65 && ord(list[a]) <= 90 ) && (ord(list[c]) >= 97 && ord(list[c]) <= 122 )  )  [ braille_characters[search_loc[0]][2],  braille_characters[search(ord("⢀"),  braille_characters)[0]][2], braille_characters[search(ord("⢀"),  braille_characters)[0]][2] ]
             
-        // if the current character is a double quote ( " ) and double_quote equals zero, increment the double_quote variable and print the character
-        else if ( a == 34 ) echo("double_quote = " , double_quote)
-            //&& dq == 0 )  [ braille_characters[search_loc[0]][2] ]
- // double_quote = double_quote + 1  
+        // if the current character is a double quote ( " ),  check if the current charcter location matches to a search result  location for (") that when one is added to the search location amd a modulo 2 operation is applied, the end result is zero. (ie, the list is "Hi", so the search results would be [0,3].  if the current character location is 3, it matches to the search result at [1] (the second one). if you take that value (1) and add 1 the result is 2, which when you apply a modulo 2 operator returns 0.  this means the value is even and therefore the second ( " ).  print the closing double quote character .  you have to search for the number assigned to the characters in the list, since this is a double glyph character
+        else if( ord(list[a])== 34 &&  ((search( a, search("\"",list,0)[0] )[0] + 1)%2 ) == 0 )  [braille_characters[search(1028810292,  braille_characters)[0]][2] ]
+    
+       // this works the exact same way as the double quote code above.  It's disable since if you have a contraction in a single quoted string (ie 'I'm Fine') it might be more confusing than just using open single quotes.  you have to search for the number assigned to the characters in the list, since this is a double glyph character
+//        else if( ord(list[a])== 39 &&  ((search( a, search("'",list,0)[0] )[0] + 1)%2 ) == 0 )  [braille_characters[search(1027210292,  braille_characters)[0]][2] ]
             
               //for anything else just pass the character
-              else     [ braille_characters[search_loc[0]][2]] ]
-                  ;
+              else    [ braille_characters[search_loc[0]][2]] 
+              ]             
+;
 
-// [ braille_characters[search_loc[0]][2] ]
 
 
-// flatten the list two times to get the characters  are at the correct depth              
+// flatten the list two times to get the characters at the correct depth              
  function flatten_character_map_list(list,x=0) =  ( x == 2) ? list :  flatten_character_map_list([ for (a = list) for (b = a) b ],x+1)  ;
      
 
@@ -233,7 +217,7 @@ function generate_character_map_list(list) =
   
  flat_char_map_list = flatten_character_map_list(character_map_list);
  
-//  flat_char_map_list2 = flatten_character_map_list(character_map_list2);
+ // flat_char_map_list2 = flatten_character_map_list(character_map_list2);
   
  BrailleDotsLocation(flat_char_map_list,dot_radius,dot_height);
 if (Backing_plate == true)  back_plate(flat_char_map_list);
