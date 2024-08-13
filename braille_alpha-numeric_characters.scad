@@ -43,7 +43,8 @@
 
 // values that fit in all of the above criteria
 dot_height = .5;
-dot_radius = .75;
+dot_diameter = 1.5;
+dot_radius = dot_diameter/2;
 dot_dist_same_cell = 2.5;
 dot_dist_next_cell = 6;
 dot_dist_next_row = 10;
@@ -53,7 +54,8 @@ dot_dist_next_row = 10;
 braille_characters = [  [32, 0,[[0,0],[0,0],[0,0]] ]/* space - 32 */, 
 [33, 0,[[0,0],[1,1],[1,0]] ]/*exclamation mark - 33 */,
 [34, 0,[[0,0],[1,0],[1,1]] ]/*double quote - 34 */,
-[35, 0,[[0,1],[0,1],[1,1]] ]/* # - 35 */ , 
+[38,0,[ [[0,1],[0,0],[0,0]],[[1,1],[1,0],[1,1]] ] ]/* ampersand  - 38 */,
+[35, 0,[[0,1],[0,1],[1,1]] ]/* number isgn - 35 */ , 
 [39, 0,[[0,0],[0,0],[1,0]] ]/* apostrophe - 39 */, 
 [44, 0,[[0,0],[1,0],[0,0]] ]/* comma - 44 */,
 [46, 0,[[0,0],[1,1],[0,1]] ]/* period - 46 */, 
@@ -78,13 +80,13 @@ braille_characters = [  [32, 0,[[0,0],[0,0],[0,0]] ]/* space - 32 */,
 [72,104,[[1,0],[1,1],[0,0]] ]/* H - 72 */,  
 [73,105,[[0,1],[1,0],[0,0]] ]/* I - 73 */,  
 [74,106,[[0,1],[1,1],[0,0]] ]/* J - 74 */,  
-[75,107,[[1,0],[0,0],[1,0]] ]/* K - 75 */, 
+[75,107,[ [ [1,0],[0,0],[1,0]] ] ]/* K - 75 */, 
 [76,108,[[1,0],[1,0],[1,0]] ]/* L - 76 */, 
 [77,109,[[1,1],[0,0],[1,0]] ]/* M - 77 */, 
 [78,110,[[1,1],[0,1],[1,0]] ]/* N - 78 */, 
 [79,111,[[1,0],[0,1],[1,0]] ]/* O - 79 */, 
-[80,112,[[1,1],[1,0],[1,0]] ]/* P - 80 */, 
-[81,113,[[1,1],[1,1],[1,0]] ]/* Q - 81 */,  
+[80,112,[ [ [1,1],[1,0],[1,0]] ] ]/* P - 80 */, 
+[81,113,[ [ [1,1],[1,1],[1,0]] ] ]/* Q - 81 */,  
 [82,114,[[1,0],[1,1],[1,0]] ]/* R - 82 */, 
 [83,115,[[0,1],[1,0],[1,0]] ]/* S - 83 */, 
 [84,116,[[0,1],[1,1],[1,0]] ]/* T - 84 */, 
@@ -94,6 +96,7 @@ braille_characters = [  [32, 0,[[0,0],[0,0],[0,0]] ]/* space - 32 */,
 [88,120,[[1,1],[0,0],[1,1]] ]/* X - 88 */, 
 [89,121,[[1,1],[0,1],[1,1]] ]/* Y - 89 */, 
 [90,122,[[1,0],[0,1],[1,1]] ]/* Z - 90 */, 
+[124,0,[ [[0,1],[0,1],[0,1]], [[1,0],[1,1],[0,1]] ] ] /* vertical line(pipe) 124 */,
 [2880,0,[[0,0],[0,0],[0,1]] ]/*capital letter*/ ];
 
 
@@ -101,14 +104,17 @@ braille_characters = [  [32, 0,[[0,0],[0,0],[0,0]] ]/* space - 32 */,
 b =0;
    
        
-raw_string = "k1LL&";   
+raw_string = "|q|qq";   
 
 
 raw_string2= "Thoink You";
 
+echo(braille_characters[45][2]);
  
-  function generate_list (string) =[ for (a = [0 : len(string)-1] )  
-    
+  function generate_character_list (string) =[ for (a = [0 : len(string)-1] )  
+      
+    search_loc = is_num(search(ord(flat_list[h]), braille_characters)[0])  ? search(ord(flat_list[h]), braille_characters)  : search(ord(flat_list[h]), braille_characters, num_returns_per_match=0, index_col_num=1)
+  
      if (a==0)  
           // check if the character is the first character and a numeric character and concat  "#"  if so
      if (a == 0 && ord(string[a]) >= 48 && ord(string[a]) <= 57)  ["#", string[a]]  
@@ -136,78 +142,133 @@ raw_string2= "Thoink You";
     // calls the fucntion to parse the string and removes any nested lists in the provided list
   function flatten_list (list)= [ for (a = list) for (b = a) b ] ;         
       
-character_list  = generate_list(raw_string);
+character_list  = generate_character_list(raw_string);
 // character_list2  = generate_list(raw_string2); 
-  echo(character_list);
-  
+
 flat_list = flatten_list(character_list);
 //flat_list2 = flatten_list(character_list2);
    
-   BrailleDotsLocation(braille_characters, flat_list);
+   BrailleDotsLocation(braille_characters, flat_list,dot_radius,dot_height);
  //  translate([0,dot_dist_next_row*-1, 0])
 //  BrailleDotsLocation(braille_characters, flat_list2);
    
   
  module BailleDots(radius,height ) {
-    intersection(){
+     difference(){
+     circle(dot_radius, $fn=32);
+         circle(.4 , $fn=32);
+     }
+  /*  intersection(){
         cylinder(h=height, r=radius, $fn=16);
         
         // (height/2)+((radius*2)^2/(8*height)) returns the radius of an arc based on hirght and width 
         translate([0, 0, ((height/2)+((radius*2)^2/(8*height))-height)*-1])
             sphere(r=(height/2)+((radius*2)^2/(8*height)), $fn=32);    
-}
+}*/
     
  } 
   
  //variable to store the returned value from the search function
- search_loc = undef;  
- 
+
+
+  
   // places the dots to form the braille characters
-module BrailleDotsLocation (list1,list2) {
-   
+module BrailleDotsLocation (list1,list2,radius,height) {
+  search_loc = undef;  
+     
     // loop through the items in teh flattened list
    for ( h = [0 : len(list2)-1])
     { 
- 
+      
   //aligns the center of the dots to the next cell reference square
- translate([h*(dot_dist_next_cell - dot_dist_same_cell), 0,0]) 
+ // translate([(h)*(dot_dist_next_cell - dot_dist_same_cell), 0,0]) 
 
   // check the braille_characrter list first object to see if it match the current character, if not 
   // check the second object to see if it matches.  set either value to search_loc 
- let( search_loc = is_num(search(ord(flat_list[h]), braille_characters)[0])  ? search(ord(flat_list[h]), braille_characters)  : search(ord(flat_list[h]), braille_characters, num_returns_per_match=0, index_col_num=1) )
+        let( search_loc = is_num(search(ord(flat_list[h]), braille_characters)[0])  ? search(ord(flat_list[h]), braille_characters)  : search(ord(flat_list[h]), braille_characters, num_returns_per_match=0, index_col_num=1) )
   
+ //      echo("list1[search_loc[0]]" ,list1[search_loc[0]])
+        echo("list1[search_loc[0]][2]" ,list1[search_loc[0]][2])
+       echo ("len(list1[search_loc[0]][2])-" ,len(list1[search_loc[0]][2]))
+        if (len(list1[search_loc[0]][2]) > 1) {
+            for ( k =  [0:len(list1[search_loc[0]][2])-1]) {
+ //        echo("h = ", h, " k = ", k)   
+                let( multi_char = k)
+        
+ //       translate([(h)*(dot_dist_next_cell ), 0,0])  
+//      echo("list[k] ", list1[search_loc[0]][2])
         // loop through item that stores the letter position data
-         for ( i = [0:len(list1[search_loc[0]])-1])
-
+                    for ( i = [0:len(list1[search_loc[0]][2][k])-1]) {
+          
+//           echo("h = ", h, " k = ", k, " i = ", i)  
+    //          echo("list[i] " ,list1[search_loc[0]][2][k])
+    //            echo(len(list1[search_loc[0]][2][k]))
             // loop through the position data 
-            for (j = [0:len(list1[search_loc[0]][2][i])-1])
-                
+                        for (j = [0:len(list1[search_loc[0]][2][k][i])-1]) {
+//             echo("h = ", h, " k = ", k, " i = ", i, " j = ",i)  
+    //        echo("list[j] ",list1[search_loc[0]][2][k][i])
               // only place dots where the is a "1" in the list
-             if(list1[search_loc[0]][2][i][j] == 1)
+            
+                            if(list1[search_loc[0]][2][k][i][j] == 1) {
                  color("yellow")
-             
+   //          translate([(h+k+1)*(dot_dist_next_cell)- dot_dist_same_cell, 0,0]) translate([(h+k+1)*(dot_dist_next_cell)- dot_dist_same_cell, 0,0]) 
+             echo("multi-dot cell translate ((",k,"+",h,")*",dot_dist_next_cell, "0,0])")
+  //           echo("multi-dot translate([",(h+j*dot_dist_same_cell), (i)*-dot_dist_same_cell, "0])")
                  // place the dot using the vallues of h, i and j to incrememnt the location 
-                 translate([(h+j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,0])
-             
+               translate([((k+h)*(dot_dist_next_cell)),0,0]) {
+                 translate([((h+j)*dot_dist_same_cell), (i)*-dot_dist_same_cell,0]) {
+    //                    translate([(k+h)*dot_dist_next_cell, 0,0])
                     // call the module that set the shape of the dots
-                  BailleDots(dot_radius,dot_height )
-       
+                  BailleDots(radius,height );
+                 }
+                }
+                }
+     
+         }
+         }
+         }
+         }
+         
+      //   if (len(list1[search_loc[0]][2])-1 == 1) {
+         else {
+         echo(list1[search_loc[0]][2][0])
+       // process the characters with out any adjustment
+       for ( i = [0:len(list1[search_loc[0]][2][0])-1]) {
+         for (j = [0:len(list1[search_loc[0]][2][0][i])-1]) {
+              // only place dots where the is a "1" in the list
+             if(list1[search_loc[0]][2][0][i][j] == 1) {
+                 color("yellow")
+                 // place the dot using the vallues of h, i and j to incrememnt the location and set the height based on the plane
+       //     translate([(h)*(dot_dist_next_cell -dot_dist_same_cell), 0,0]) 
+             translate([(h)*(dot_dist_next_cell ), 0,0]) {
+                 translate([(h+j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,0]){
+                    BailleDots(radius,height );
+                 }
+             }
+             
+             }
+         }
+         }
+     }
+         }
    ;         
     
          }
          
-    }
+    
 
 
-/*
+
 // spaceing test references
  for (h = [0:4])
  for (i= [0:9])     
  translate([i*2*dot_dist_next_cell, dot_dist_next_row*h*-2-10,0])
      %cube([dot_dist_next_cell, dot_dist_next_row ,dot_height]);
-*/
 
+/*
      // braille backing
  for (i= [-1:len(flat_list)-1])     
  translate([(i*dot_dist_next_cell+(dot_radius*1.5)) , dot_dist_next_row*-.75,(dot_radius)*-2])
      cube([dot_dist_next_cell, dot_dist_next_row ,dot_radius*2]);      
+ */
+ 
