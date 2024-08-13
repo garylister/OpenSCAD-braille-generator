@@ -101,67 +101,70 @@ braille_characters = [  [32,[[0,0],[0,0],[0,0]] ]/* space - 32 */,
 b =0;
    
        
-raw_string = "Th3";   
-echo("raw_string " ,raw_string);
+raw_string = "H3ll0 W0rld!";   
+//echo("raw_string " ,raw_string);
+
+raw_string2= "Thoink You";
 
  
-  braille_list1 = [ for (a = [0 : len(raw_string)-1] )  
+  function generate_list (string) =[ for (a = [0 : len(string)-1] )  
     
      if (a==0)  
           // check if the character is the first character and a numeric character and concat  "#"  if so
-     if (a == 0 && ord(raw_string[a]) >= 48 && ord(raw_string[a]) <= 57)  ["#", raw_string[a]]  
+     if (a == 0 && ord(string[a]) >= 48 && ord(string[a]) <= 57)  ["#", string[a]]  
       
          // check if the character is a capital alpha character and concst the braille capital indicator 
-          else if  ( ord(raw_string[a]) >= 65 && ord(raw_string[a]) <= 90 )  ["ୀ", raw_string[a]]  
+          else if  ( ord(string[a]) >= 65 && ord(string[a]) <= 90 )  ["ୀ", string[a]]  
               //for anything else just pass the character
-              else     [ raw_string[a]]      
+              else     [ string[a]]      
               
     else  
         // assign b so we can get the previous index number and charck that character
         let (b = a-1)
      // check if the previous character is a "space" and the current character is numeric and concat  "#"  if so
-     if ( (ord(raw_string[b]) == 32 && ord(raw_string[a]) >= 48 && ord(raw_string[a]) <= 57) ) ["#", raw_string[a]]  
+     if ( (ord(string[b]) == 32 && ord(string[a]) >= 48 && ord(string[a]) <= 57) ) ["#", string[a]]  
          // check if the previous  character is not a number while the current character is a number and concat  "#"  if so
         // there appears to be a limit of three checks in an if statement, hence the two separate lines
-         else if   ((ord(raw_string[b]) <48  && ord(raw_string[a]) >= 48 && ord(raw_string[a]) <= 57 ))["#", raw_string[a]]  
-         else if   ((ord(raw_string[b]) >57 &&  ord(raw_string[a]) >= 48 && ord(raw_string[a]) <= 57 ))["#", raw_string[a]]  
+         else if   ((ord(string[b]) <48  && ord(string[a]) >= 48 && ord(string[a]) <= 57 ))["#", string[a]]  
+         else if   ((ord(string[b]) >57 &&  ord(string[a]) >= 48 && ord(string[a]) <= 57 ))["#", string[a]]  
           // check if the character is a capital alpha character and concat the braille capital indicator 
-         else if  ( ord(raw_string[a]) >= 65 && ord(raw_string[a]) <= 90 )  ["ୀ", raw_string[a]]  
+         else if  ( ord(string[a]) >= 65 && ord(string[a]) <= 90 )  ["ୀ", string[a]]  
               //for anything else just pass the character
-              else     [ raw_string[a]]  ] ;    
+              else     [ string[a]]  ]     ;
 
-    echo("braille_list1 " , braille_list1);  
-    // this removes any nested lists in the provided list
- // function flatten(l) = [ for (a = l) for (b = a) b ] ;
- //braille_list2 = flatten(braille_list1);  
-   braille_list2 = [ for (a = braille_list1) for (b = a) b ] ;          
-  echo("braille_list2 ", braille_list2);
- echo("braille_list2 length " ,len(braille_list2));
+
+    // calls the fucntion to parse the string and removes any nested lists in the provided list
+  function flatten_list (list)= [ for (a = list) for (b = a) b ] ;         
+      
+character_list  = generate_list(raw_string);
+ character_list2  = generate_list(raw_string2); 
   
-  // second row
-//  translate([0, dot_dist_next_row*-1,0])
-  
-for ( h = [0 : len(braille_list2)-1])
-{ 
+flat_list = flatten_list(character_list);
+flat_list2 = flatten_list(character_list2);
+   
+   BrailleDots(braille_characters, flat_list);
+   translate([0,dot_dist_next_row*-1, 0])
+  BrailleDots(braille_characters, flat_list2);
+   
+  // places the dots to form teh braille characters
+module BrailleDots (list1,list2) {
+   for ( h = [0 : len(list2)-1])
+    { 
   
   //aligns the center of the dots to the next cell reference square
  translate([h*(dot_dist_next_cell - dot_dist_same_cell), 0,0]) 
- //  c = 0;
-//  echo(test_string[h]," = ",ord(test_string[h]))
- //  echo("test string length ",len(test_string)-1)
-   if (ord(braille_list2[h]) >= 97 && ord(braille_list2[h]) <= 122)  
+
+    // check if the character is a capital letter
+   if (ord(list2[h]) >= 97 && ord(list2[h]) <= 122)  
    {
-        for ( i = [0:len(braille_characters[search(ord(braille_list2[h])-32, braille_characters)[0]][1])-1])
-//         echo("length ", len(braille_characters[search(ord(braille_list2[h])-32, braille_characters)[0]][1])-1)
- //        echo("braille_charactes[i] level ",braille_characters[search(ord(braille_list2[h])-32, braille_characters)[0]][1])
-         for (j = [0:len(braille_characters[search(ord(braille_list2[h])-32, braille_characters)[0]][1][i])-1])
-    //         echo("i = ", i, " j = ", j, "and i*2.5 = ", i*2.5, " and j*2.5 =", j*2.5);
- //           echo("braille_characters j level ",  braille_characters[search(ord(braille_list2[h])-32, braille_characters)[0]][1][i])
- //           echo(braille_characters[search(ord(braille_list2[h])-32, braille_characters)[0]][1][i][j])
-            if(braille_characters[search(ord(braille_list2[h])-32, braille_characters)[0]][1][i][j] == 1)
+       // if the character is a upper case letter, subtract 32 to make it a lower case letter
+       // this just reduces the amount of character data, since the braille pattern is the same for both
+        for ( i = [0:len(list1[search(ord(list2[h])-32, list1)[0]][1])-1])
+         for (j = [0:len(list1[search(ord(list2[h])-32, list1)[0]][1][i])-1])
+             // only place dots where the is a "1" in the list
+            if(list1[search(ord(list2[h])-32, list1)[0]][1][i][j] == 1)
                  color("yellow")
-//                 echo("h = ", h, " i = ", i, " j = ", j)
-      //        translate([h*5.1, 0,0]) 
+                // place the dot using the vallues of h, i and j to incrememnt the location and set the height based on the plane
                  translate([(h+j)*dot_dist_same_cell, (i)*-dot_dist_same_cell, (dot_radius - dot_height)*-1])
                    sphere(dot_radius, $fn=20);
                  
@@ -169,17 +172,13 @@ for ( h = [0 : len(braille_list2)-1])
     
    else 
    {
-       for ( i = [0:len(braille_characters[search(ord(braille_list2[h]), braille_characters)[0]][1])-1])
-  //       echo("length ", len(braille_characters[search(ord(test_string[h])-32, braille_refs)[0]])-1)
-//        echo("braille_charactes[i] level ",braille_characters[search(ord(braille_list2[h]), braille_characters)[0]][1])
-         for (j = [0:len(braille_characters[search(ord(braille_list2[h]), braille_characters)[0]][1][i])-1])
-    //         echo("i = ", i, " j = ", j, "and i*2.5 = ", i*2.5, " and j*2.5 =", j*2.5);
-//           echo("braille_characters j level ",  braille_characters[search(ord(braille_list2[h]), braille_characters)[0]][1][i])
- //        echo("braille_characters j level ",  braille_characters[search(ord(braille_list2[h]), braille_characters)[0]][1][i][j])
-             if(braille_characters[search(ord(braille_list2[h]), braille_characters)[0]][1][i][j] == 1)
+       // process the characters with out any adjustment
+       for ( i = [0:len(list1[search(ord(list2[h]), list1)[0]][1])-1])
+         for (j = [0:len(list1[search(ord(list2[h]), list1)[0]][1][i])-1])
+              // only place dots where the is a "1" in the list
+             if(list1[search(ord(list2[h]), list1)[0]][1][i][j] == 1)
                  color("yellow")
-//                 echo("h = ", h, " i = ", i, " j = ", j)
-      //        translate([h*5.1, 0,0]) 
+                 // place the dot using the vallues of h, i and j to incrememnt the location and set the height based on the plane
                  translate([(h+j)*dot_dist_same_cell, (i)*-dot_dist_same_cell,(dot_radius - dot_height)*-1])
                    sphere(dot_radius, $fn=20);
              
@@ -187,11 +186,17 @@ for ( h = [0 : len(braille_list2)-1])
 
          }
      }
-
+ }
 
 
 // spaceing test references
- for (i= [0:10])     
- translate([i*2*dot_dist_next_cell, dot_dist_next_row*-1,0])
+ for (h = [0:4])
+ for (i= [0:9])     
+ translate([i*2*dot_dist_next_cell, dot_dist_next_row*h*-2-10,0])
      %cube([dot_dist_next_cell, dot_dist_next_row ,dot_height]);
 
+
+     // braille backing
+ for (i= [-1:len(flat_list)-1])     
+ translate([(i*dot_dist_next_cell+(dot_radius*1.5)) , dot_dist_next_row*-.75,(dot_radius)*-2])
+     cube([dot_dist_next_cell, dot_dist_next_row ,dot_radius*2]);      
